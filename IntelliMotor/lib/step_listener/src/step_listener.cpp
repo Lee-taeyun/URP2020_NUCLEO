@@ -1,41 +1,42 @@
 #include "step_listener.h"
 
-void StepListener::_stepUp(){this->stepIn=1;};
-void StepListener::_stepDown(){this->stepIn=0;};
-void StepListener::_dirUp(){this->dirIn=1;};
-void StepListener::_dirDown(){this->dirIn=0;};
-void StepListener::_ms1Up(){this->ms1In=1;};
-void StepListener::_ms1Down(){this->ms1In=0;};
-void StepListener::_ms2Up(){this->ms2In=1;};
-void StepListener::_ms2Down(){this->ms2In=0;};
-void StepListener::_ms3Up(){this->ms3In=1;};
-void StepListener::_ms3Down(){this->ms3In=0;};
+StepListener::StepListener():
+            step(external_step), dir(external_dir), ms1(external_ms1), ms2(external_ms2), ms3(external_ms3),
+            stepIn(internal_step), dirIn(internal_dir), ms1In(internal_ms1), ms2In(internal_ms2), ms3In(internal_ms3){
+    //Initialize member pins
+    //Interrupt Service Rountines will be registered in StepListener::readyToListen function
 
+}
 StepListener::StepListener(PinName step, PinName dir, PinName ms1, PinName ms2, PinName ms3,
                             PinName stepIn, PinName dirIn, PinName ms1In, PinName ms2In, PinName ms3In):
                             step(step), dir(dir), ms1(ms1), ms2(ms2), ms3(ms3),
-                            stepIn(stepIn), dirIn(dirIn), ms1In(ms1In), ms2In(ms2In){
+                            stepIn(stepIn), dirIn(dirIn), ms1In(ms1In), ms2In(ms2In), ms3In(ms3In) {
+    //Initialize member pins
+    //Interrupt Service Rountines will be registered in StepListener::readyToListen function
+}
+void StepListener::readyToListen(){
+    //Please Call once in setup routines
 
-    //In python, there is a lambda function exrpression.... 
-    //In C++, I dont know the equivalnet expression... please update
-    
+    //Interrrupt Service Routines are registered
+    //C++ labmda expression is used -> see here : https://modoocode.com/196
+
     this->step.mode(PullDown);
-    this->step.rise(&this->_stepUp);
-    this->step.fall(&(this->_stepDown));
+    this->step.rise( [this](void)->void{this->stepIn=1;} );
+    this->step.fall( [this](void)->void{this->stepIn=0;} );
 
     this->dir.mode(PullDown);
-    this->dir.rise(&(this->_dirUp));
-    this->dir.fall(&(this->_dirDown));
+    this->dir.rise( [this](void)->void{this->dirIn=1;} );
+    this->dir.fall( [this](void)->void{this->dirIn=0;} );
 
     this->ms1.mode(PullDown);
-    this->ms1.rise(&(this->_ms1Up));
-    this->ms1.fall(&(this->_ms1Down));
+    this->ms1.rise( [this](void)->void{this->ms1In=1;} );
+    this->ms1.fall( [this](void)->void{this->ms1In=0;} );
 
-    ms2.mode(PullDown);
-    ms2.rise(&(this->_ms2Up));
-    ms2.fall(&(this->_ms2Down));
+    this->ms2.mode(PullDown);
+    this->ms2.rise( [this](void)->void{this->ms2In=1;} );
+    this->ms2.fall( [this](void)->void{this->ms2In=0;} );
 
-    ms3.mode(PullDown);
-    ms3.rise(&(this->_ms3Up));
-    ms3.fall(&(this->_ms3Down));    
+    this->ms3.mode(PullDown);
+    this->ms3.rise( [this](void)->void{this->ms3In=1;} );
+    this->ms3.fall( [this](void)->void{this->ms3In=0;} );
 }
