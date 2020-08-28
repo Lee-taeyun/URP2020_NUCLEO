@@ -1,5 +1,6 @@
-#ifndef DEF_PINS
 #include "mbed.h"
+#ifndef DEF_PINS
+#define DEF_PINS
 #define external_dir    PB_6
 #define external_step   PB_8
 #define external_ms1    PB_1
