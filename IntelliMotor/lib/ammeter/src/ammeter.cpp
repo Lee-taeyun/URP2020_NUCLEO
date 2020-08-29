@@ -1,17 +1,14 @@
 #include "ammeter.h"
 
-Ammeter::Ammeter():current(current_sense), filter(){
 
-}
-
-Ammeter::Ammeter(PinName currentPin):current(currentPin), filter(){
-
+Ammeter::Ammeter(AnalogIn* currentPin):filter(){
+    this->current = currentPin;
 }
 
 double Ammeter::readCurrent(){
-    return (double)(this->current.read());
+    return (double)(this->current->read());
 }
 
 double Ammeter::readCurrentLPF(){
-    return this->filter.LPF(this->current.read(),LPF_alpha);
+    return this->filter.LPF(this->current->read(),LPF_alpha);
 }
