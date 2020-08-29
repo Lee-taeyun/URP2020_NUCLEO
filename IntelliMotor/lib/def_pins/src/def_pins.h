@@ -1,6 +1,7 @@
-#include "mbed.h"
+#include <mbed.h>
 #ifndef DEF_PINS
 #define DEF_PINS
+
 #define external_dir    PB_6
 #define external_step   PB_8
 #define external_ms1    PB_1
@@ -16,5 +17,7 @@
 #define stall PB_12
 #define force_dir PB_15
 #define force_mag PB_14
+
+#define current_sense PC_0
 
 #endif

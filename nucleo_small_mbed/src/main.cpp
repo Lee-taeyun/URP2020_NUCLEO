@@ -4,6 +4,9 @@
 #include "Stall_Load_Detection.h"
 
 static BufferedSerial pc(USBTX, USBRX);
+
+//Timer t should be defined in main.cpp
+//AccelStepper call Timer t as extern variable
 Timer t;
 AccelStepper stepper1(AccelStepper::DRIVER,internal_step,internal_dir);
 
