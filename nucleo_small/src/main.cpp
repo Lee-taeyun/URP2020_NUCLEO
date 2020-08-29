@@ -1,6 +1,6 @@
 #include "Stall_Load_Detection.h"
 
-AccelStepper stepper1(AccelStepper::DRIVER, SET_SPEED, SET_DIR);
+AccelStepper stepper1(AccelStepper::DRIVER, PA_5, PA_4);
 
 int data;
 int speed = 0;
