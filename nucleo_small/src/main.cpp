@@ -20,7 +20,8 @@ void setup()
   last_time = millis();
   
   dir=0;
-  //Get_Linear_Regression3(stepper1);
+  Get_Linear_Regression3(stepper1);
+  stepper1.setSpeed(100);
   
 }
 

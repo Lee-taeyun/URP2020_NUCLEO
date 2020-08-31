@@ -148,8 +148,8 @@ bool AccelStepper::run() {
   return _speed != 0.0 || distanceToGo() != 0;
 }
 
-AccelStepper::AccelStepper(uint8_t interface, PinName pin1, PinName pin2,
-                           PinName pin3, PinName pin4, bool enable) {
+AccelStepper::AccelStepper(uint8_t interface, DigitalOut* pin1, DigitalOut* pin2,
+                           DigitalOut* pin3, DigitalOut* pin4, bool enable) {
   _interface = interface;
   _currentPos = 0;
   _targetPos = 0;
@@ -165,10 +165,10 @@ AccelStepper::AccelStepper(uint8_t interface, PinName pin1, PinName pin2,
   // _pin[2] = pin3;
   // _pin[3] = pin4;
   _enableInverted = false;
-  _pin0 = new DigitalOut(pin1);
-  _pin1 = new DigitalOut(pin2);
-  _pin2 = new DigitalOut(pin3);
-  _pin3 = new DigitalOut(pin4);
+  _pin0 = pin1;
+  _pin1 = pin2;
+  _pin2 = pin3;
+  _pin3 = pin4;
 
   // NEW
   _n = 0;
