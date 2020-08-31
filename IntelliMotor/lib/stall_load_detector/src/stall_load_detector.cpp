@@ -1,7 +1,7 @@
 #include "stall_load_detector.h"
 
 StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper){
-    this-> ammeter = amm;
+    this->ammeter = amm;
     this->stepper = stepper;
 }
 
@@ -61,6 +61,13 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
     #endif
 }
 
-double StallLoadDetector::getCurrentValues(int idx){
-    return this->currentValues[idx];
+double StallLoadDetector::calculateCurrentFromSpeed(int speed){
+    //Get current using array
+    int quotient = speed/skip_step;
+    int remainder = speed%skip_step;
+    if(remainder){
+        return (this->currentValues[quotient]+this->currentValues[quotient])/2;
+    }else{
+        return this->currentValues[quotient];
+    }
 }

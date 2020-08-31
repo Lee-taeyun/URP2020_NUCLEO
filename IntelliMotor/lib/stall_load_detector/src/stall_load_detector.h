@@ -21,13 +21,11 @@ class StallLoadDetector{
         double currentValues[NUM_OF_CURRENT_SAMPLE];
         const static int skip_step = MAX_STEP_SPEED/NUM_OF_CURRENT_SAMPLE;
         //MAX_STEP_SPEED = NUM_OF_CURRENT_SAMPLE * skip_step
-
+        
     public:
         StallLoadDetector(Ammeter* amm, AccelStepper* stepper);
         void measureMotorCharacteristics();
         void measureMotorMeanCharacteristics();
-        double getCurrentValues(int idx);
+        double calculateCurrentFromSpeed(int speed);
 };
-
-
 #endif
