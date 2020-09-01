@@ -1,8 +1,8 @@
 #include <mbed.h>
+#include "def_pins.h"
 #include "step_listener.h"
 #include "stall_load_detector.h"
-//#include "Stall_Load_Detection.h"
-
+#include "Flash_handler.h"
 static BufferedSerial pc(USBTX, USBRX);
 
 //Timer t should be defined in main.cpp
@@ -30,11 +30,30 @@ int main() {
   stepper1.setMinPulseWidth(20);
   stepper1.setMaxSpeed(2000);
   stepper1.setSpeed(400);
+
   
+  Flash_handler Flash_handler;
   
+
+  /*
   Ammeter ammeter(&currentPin);
   StallLoadDetector detector(&ammeter, &stepper1);
   detector.measureMotorCharacteristics();
+  Flash_handler.Flash_erase();
+  Flash_handler.Flash_write(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
+  
+  printf("\n\n");
+  */
+  double* array = new double[500];
+  Flash_handler.Flash_read(array,NUM_OF_CURRENT_SAMPLE *sizeof(double));
+  
+  
+  for(int i=0; i<500; i++){
+    printf("%d\n", (int)(array[i]));
+  }
+  
+  
+
   //Get_Linear_Regression2(stepper1);
   //AnalogIn 
   // put your setup code here, to run once:
