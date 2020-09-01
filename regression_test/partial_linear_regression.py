@@ -47,8 +47,7 @@ def split(line, points, depth):
         needleIdx = needleMinIdx
     else:
         needleIdx = needleMaxIdx
-    needleIdx = needleMaxIdx
-    #needleIdx = points.index(needle)
+        
     lPoints = points[:needleIdx]
     rPoints = points[needleIdx:]
 
