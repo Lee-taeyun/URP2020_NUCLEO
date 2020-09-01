@@ -422,8 +422,9 @@ public:
   /// to pin 5.
   /// \param[in] enable If this is true (the default), enableOutputs() will be
   /// called to enable the output pins at construction time.
-  AccelStepper(uint8_t interface, DigitalOut* pin1, DigitalOut* pin2,
-                           DigitalOut* pin3=0, DigitalOut* pin4=0, bool enable=0);
+  AccelStepper(uint8_t interface = AccelStepper::FULL4WIRE, PinName pin1 = LED1,
+               PinName pin2 = LED2, PinName pin3 = LED3, PinName pin4 = LED4,
+               bool enable = true);
 
   /// Alternate Constructor which will call your own functions for forward and
   /// backward steps. You can have multiple simultaneous steppers, all moving at
@@ -597,10 +598,10 @@ public:
   bool isRunning();
 
 protected:
-  DigitalOut* _pin0;
-  DigitalOut* _pin1;
-  DigitalOut* _pin2;
-  DigitalOut* _pin3;
+  DigitalOut *_pin0;
+  DigitalOut *_pin1;
+  DigitalOut *_pin2;
+  DigitalOut *_pin3;
 
   /// \brief Direction indicator
   /// Symbolic names for the direction the motor is turning

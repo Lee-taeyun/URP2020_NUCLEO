@@ -3,6 +3,10 @@
 StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper1){
     this->stepper = stepper1;
     this->ammeter = amm;
+    this->currentValues = new double[NUM_OF_CURRENT_SAMPLE];
+}
+StallLoadDetector::~StallLoadDetector(){
+    delete[] this->currentValues;    
 }
 /*
 void StallLoadDetector::startToRun(){
@@ -22,9 +26,10 @@ void StallLoadDetector::measureMotorCharacteristics(){
     //this->startToRun();
     while(speed < MAX_STEP_SPEED){
         this->stepper->runSpeed();
+        ammeter->readCurrentLPF();//we should readCurrentLPF() ALWAYS, NOT only just write down
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME){
             this->stepper->runSpeed();
-            this->currentValues[idx] = ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
+            this->currentValues[idx] = (ammeter->readCurrentLPF())*SAMPLE_VALUE_MULTIPLIER;
             idx++;
             speed = speed + skip_step;
             
@@ -32,12 +37,13 @@ void StallLoadDetector::measureMotorCharacteristics(){
             this->stepper->runSpeed();
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
         }
+        //ammeter->readCurrentLPF();
     }
 
     //#ifdef DEBUG
-    //for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
-    //    printf("%d\n",(int)(1000*this->currentValues[i]));
-    //}
+    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
+        printf("%d\n",(int)(this->currentValues[i]));
+    }
     //#endif
 }
 

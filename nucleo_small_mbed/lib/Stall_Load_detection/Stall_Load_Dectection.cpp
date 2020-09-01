@@ -96,13 +96,13 @@ void Get_Linear_Regression2(AccelStepper& stepper)
   b = (Y_*X_sq - X_*XY_)/denum;
   A=(500*XY_- X_*Y_)/denum;
 */
-/*
+
   for (int i = 0; i < CURRENT_LEN; i++)
   {
     printf("%d\n",(int)(_current[i]));
   }
-  */
-  printf("%d\n",(int)(stepper.speed()));
+  
+
   return;
 }
 

@@ -7,7 +7,7 @@ Filter::Filter(){
 double Filter::LPF(double newData, double alpha){
     if(this->isPreviousDataStored){
     //update previous data after LPF with newData
-        this->previousData = alpha*this->isPreviousDataStored + (1-alpha)*newData;
+        this->previousData = alpha*this->previousData + (1-alpha)*newData;
         return this->previousData; //return the result of LPF
     }else{
         this->previousData = newData;
