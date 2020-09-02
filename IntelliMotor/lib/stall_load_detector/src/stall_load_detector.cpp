@@ -21,12 +21,6 @@ void StallLoadDetector::measureMotorCharacteristics(){
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
         }
     }
-
-    #ifdef DEBUG
-    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
-        printf("%d\n",(int)(this->currentValues[i]));
-    }
-    #endif
 }
 
 void StallLoadDetector::measureMotorMeanCharacteristics(){
@@ -53,12 +47,6 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
         }
     }
-
-    #ifdef DEBUG
-    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
-        printf("%d\n",(int)(this->currentValues[i]));
-    }
-    #endif
 }
 
 double StallLoadDetector::getCurrentValues(int idx){
