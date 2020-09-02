@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import namedtuple as nt
 
-MAX_DEPTH = 5
+MAX_DEPTH = 4
 
 def loadData(fname):
     with open(fname) as f:
@@ -23,7 +23,7 @@ def yFrom(line, x):
     return line.a*x + line.b
 
 def distanceSquare(line, point):
-    return pow(abs( line.a*point.x - point.y + line.b),2)/(line.a*line.a + 1)
+    return pow(abs( line.a*point.x - point.y + line.b),2) / (line.a*line.a + 1)
 
 def linearRegression(points):
     xSum = sum([p.x for p in points])
@@ -58,7 +58,7 @@ def split(line, points, depth):
         leftLine = linearRegression(lPoints)
         rightLine = linearRegression(rPoints)
     
-        if depth == MAX_DEPTH:
+        if depth == MAX_DEPTH-1:
             return [leftLine, rightLine]
         else:
             splited1 = split(leftLine, lPoints, depth+1)
@@ -88,4 +88,5 @@ if __name__ == "__main__":
     line0 = linearRegression(data)
     #drawLines([line0],data)
     lines = split(line0, data, 0)
+    print(len(lines))
     drawLines(lines,data)
