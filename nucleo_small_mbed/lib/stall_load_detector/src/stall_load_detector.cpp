@@ -1,9 +1,21 @@
 #include "stall_load_detector.h"
 
-StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper){
+StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper1){
+    this->stepper = stepper1;
     this->ammeter = amm;
-    this->stepper = stepper;
+    this->currentValues = new double[NUM_OF_CURRENT_SAMPLE];
 }
+StallLoadDetector::~StallLoadDetector(){
+    delete[] this->currentValues;    
+}
+/*
+void StallLoadDetector::startToRun(){
+    //Meausre stepSpeed per tickDuration
+    this->runner.attach([this](void)->void{
+        this->stepper->runSpeed();
+    }, 0.00001);
+}
+*/
 
 void StallLoadDetector::measureMotorCharacteristics(){
     extern Timer t;
@@ -11,16 +23,28 @@ void StallLoadDetector::measureMotorCharacteristics(){
     unsigned int idx = 0;
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
+    //this->startToRun();
     while(speed < MAX_STEP_SPEED){
         this->stepper->runSpeed();
+        ammeter->readCurrentLPF();//we should readCurrentLPF() ALWAYS, NOT only just write down
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME){
-            this->currentValues[idx] = ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
+            this->stepper->runSpeed();
+            this->currentValues[idx] = (ammeter->readCurrentLPF())*SAMPLE_VALUE_MULTIPLIER;
             idx++;
             speed = speed + skip_step;
+            
             this->stepper->setSpeed(speed);
+            this->stepper->runSpeed();
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
         }
+        //ammeter->readCurrentLPF();
     }
+
+    //#ifdef DEBUG
+    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
+        printf("%d\n",(int)(this->currentValues[i]));
+    }
+    //#endif
 }
 
 void StallLoadDetector::measureMotorMeanCharacteristics(){
@@ -31,12 +55,14 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
     unsigned int samplingCount = 0;
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
+    //this->startToRun();
     while(speed < MAX_STEP_SPEED){
-        this->stepper->runSpeed();
+       this->stepper->runSpeed();
         sampleMean += ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
         samplingCount++; // to divide sampleMean
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME ){
-            this->currentValues[idx] = sampleMean/samplingCount;
+            this->currentValues[idx] = (sampleMean)/samplingCount;
+            this->stepper->runSpeed();
             //start to sampleMean again 
             sampleMean = 0;
             samplingCount = 0;
@@ -44,9 +70,17 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
             
             speed = speed + skip_step;
             this->stepper->setSpeed(speed);
+            this->stepper->runSpeed();
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
         }
     }
+
+    //#ifdef DEBUG
+    //for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
+    //    int value = (int)(this->currentValues[i]);
+    //    printf("%d\n",(int)(value));
+    //}
+    //#endif
 }
 
 double StallLoadDetector::calculateCurrentFromSpeed(int speed){

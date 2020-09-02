@@ -27,7 +27,7 @@ int main() {
     uint32_t*       data = new uint32_t[15] {1, 2, 3};    // create an array in SRAM and initialize the first three elements
     printf("data_len = %d\r\n", data_len);
     data[11] = 572; // set element 11 to 572
-    /*
+    
     // Print the first 15 elements
     for (int i = 0; i < 15; i++) {
         printf("data[%d] = %d\r\n", i, data[i]);
@@ -39,7 +39,7 @@ int main() {
 
 
     printf("----------------------\r\n");
-    */
+    
     // Clear the first 15 elements in SRAM (to see whether they are going to be updated with values stored in FLASH)
     for (int i = 0; i < 15; i++) {
         data[i] = 0;

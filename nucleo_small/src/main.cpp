@@ -1,6 +1,6 @@
 #include "Stall_Load_Detection.h"
 
-AccelStepper stepper1(AccelStepper::DRIVER, PA_5, PA_4);
+AccelStepper stepper1(AccelStepper::DRIVER, 13, PA_4);
 
 int data;
 int speed = 0;
@@ -20,7 +20,8 @@ void setup()
   last_time = millis();
   
   dir=0;
-  //Get_Linear_Regression3(stepper1);
+  Get_Linear_Regression2(stepper1);
+  stepper1.setSpeed(500);
   
 }
 
