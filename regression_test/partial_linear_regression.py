@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import namedtuple as nt
 
-MAX_DEPTH = 10
+MAX_DEPTH = 5
 
 def loadData(fname):
     with open(fname) as f:
@@ -43,11 +43,13 @@ def split(line, points, depth):
     needleMinIdx = points.index(needleMin)
     needleMaxIdx = points.index(needleMax)
     middleIdx = len(points)/2
+
+    # max로 잡았을 때와 min으로 잡았을 때의 특성이 다른데, 여기서 둘의 특성이 잘 합쳐진다
     if abs(middleIdx-needleMaxIdx) > abs(middleIdx-needleMinIdx):
         needleIdx = needleMinIdx
     else:
         needleIdx = needleMaxIdx
-        
+
     lPoints = points[:needleIdx]
     rPoints = points[needleIdx:]
 
@@ -63,18 +65,6 @@ def split(line, points, depth):
             splited2 = split(rightLine, rPoints, depth+1)
             splited1.extend(splited2)
             return splited1
-    elif len(lPoints)>1:
-        leftLine = linearRegression(lPoints)
-        if depth == MAX_DEPTH:
-            return [leftLine]
-        else:
-            return split(leftLine, lPoints, depth+1)
-    elif len(rPoints)>1:
-        rightLine = linearRegression(rPoints)
-        if depth == MAX_DEPTH:
-            return [rightLine]
-        else:
-            return split(rightLine,rPoints,depth+1)
     else:
         return [line]
 
