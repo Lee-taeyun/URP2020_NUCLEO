@@ -2,8 +2,6 @@
 #include "mbed.h"
 
 #define ABS(x) ( ((x)<0)?-(x):(x) )
-#define MAX_DEPTH 5
-#define LEN_OF_DATASET 500
 
 typedef struct _Range{
     // start is included
@@ -19,7 +17,7 @@ typedef struct _Line{
     Range x;
 } Line;
 
-Line* getTrendLine(double*, const int, const int);
+Line* getTrendLine(double* data, const int lenOfData, const int maxDepth);
 int getMaxLenOFContainer(int maxDepth);
 int sizeofLineContainer(Line* container, int maxLenOfContainer);
 double getCurrentValue(double speed, const int maxSpeed, const int lenOfData, 
