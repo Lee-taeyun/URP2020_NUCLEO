@@ -65,7 +65,7 @@ int main() {
   stepper1.setSpeed(400);
 
   while(1){
-  printf("%d\n",(int)(detector.getLoadCurrent(&driver)));
+  printf("%ld\n",(long)(detector.getLPFLoadCurrent(&driver)));
   //printf("%d\n",(int)(detector.calculateCurrentFromSpeed(&driver))); 
   //printf("%d\n",(int)(detector.gettotalCurrent(&driver)));
   //printf("%d\n",(int)(driver.getCurrentSpeed()));  

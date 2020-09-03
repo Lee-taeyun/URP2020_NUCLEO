@@ -22,6 +22,8 @@ class StallLoadDetector{
         Ticker runner;
         const static int skip_step = MAX_STEP_SPEED/NUM_OF_CURRENT_SAMPLE;
         //MAX_STEP_SPEED = NUM_OF_CURRENT_SAMPLE * skip_step
+
+        Filter LPF_filter;//for GetLPFLoadCureent
         
     public:
         double *currentValues;
@@ -31,6 +33,9 @@ class StallLoadDetector{
         double calculateCurrentFromSpeed(StepListener* steplistener);
         double getLoadCurrent(StepListener* steplistener);
         double gettotalCurrent(StepListener* steplistener);
+
+        
+        double getLPFLoadCurrent(StepListener* steplistener);
         ~StallLoadDetector();
 };
 #endif

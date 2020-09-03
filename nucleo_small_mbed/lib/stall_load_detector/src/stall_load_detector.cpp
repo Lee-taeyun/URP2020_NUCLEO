@@ -87,7 +87,8 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
 
 double StallLoadDetector::calculateCurrentFromSpeed(StepListener* steplistener){
     //Get current using array
-    double speed = steplistener->getCurrentSpeed();
+    int speed = (int)(steplistener->getCurrentSpeed());
+    if( speed >1000 || speed<0) speed = speed %1000;
     int quotient = ((int)speed)/skip_step;
     int remainder = ((int)speed)%skip_step;
     if(remainder){
@@ -102,4 +103,10 @@ double StallLoadDetector::gettotalCurrent(StepListener* steplistener){
 }
 double StallLoadDetector::getLoadCurrent(StepListener* steplistener){
     return SAMPLE_VALUE_MULTIPLIER*(ammeter->readCurrentLPF()) - calculateCurrentFromSpeed(steplistener);
+}
+
+double StallLoadDetector::getLPFLoadCurrent(StepListener* steplistener){
+    double LoadCurrent = getLoadCurrent(steplistener);
+    
+    return LoadCurrent - LPF_filter.LPF(LoadCurrent,LPF_alpha);
 }
