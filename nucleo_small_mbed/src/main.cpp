@@ -53,7 +53,7 @@ int main() {
   
   
   if(ms3 ==1){
-    detector.measureMotorCharacteristics();
+    detector.measureMotorMeanCharacteristics();
     Flash_handler.Flash_erase();
     Flash_handler.Flash_write(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
   }
@@ -61,13 +61,15 @@ int main() {
   
   //Get_Linear_Regression2(stepper1);
   // put your setup code here, to run once:
-  double speed=200;
+  //double speed=200;
   stepper1.setSpeed(400);
-  while(1){
-    stepper1.setSpeed(speed+200);
-    speed=speed+0.0001;
 
-    stepper1.runSpeed();
+  while(1){
+  printf("%d\n",(int)(detector.getLoadCurrent(&driver)));
+  //printf("%d\n",(int)(detector.calculateCurrentFromSpeed(&driver))); 
+  //printf("%d\n",(int)(detector.gettotalCurrent(&driver)));
+  //printf("%d\n",(int)(driver.getCurrentSpeed()));  
+  //printf("%d\n",(int)(driver.returnSpeed()));
   // put your main code here, to run repeatedly:
   }
     return 0;

@@ -45,6 +45,7 @@ class StepListener{
 
         void calculateSpeed();
         double getCurrentSpeed();
+        double returnSpeed();
 };
 
 #endif 

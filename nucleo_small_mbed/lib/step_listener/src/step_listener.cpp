@@ -33,7 +33,7 @@ void StepListener::readyToListen(){
         this->stepTicks = 0;
     }, tickDuration);
 
-
+    
     */
     stepIn->write(0);
     dirIn->write(0);
@@ -43,8 +43,9 @@ void StepListener::readyToListen(){
 
     this->step->mode(PullDown);
     this->step->rise( [this](void)->void{
+        calculateSpeed();
         this->stepIn->write(1);
-        calculateSpeed();//added by taeyun
+        //added by taeyun
     } );
     this->step->fall( [this](void)->void{this->stepIn->write(0);} );
 
@@ -64,6 +65,9 @@ void StepListener::readyToListen(){
     this->ms3->mode(PullDown);
     this->ms3->rise( [this](void)->void{this->ms3In->write(1);} );
     this->ms3->fall( [this](void)->void{this->ms3In->write(0);} );
+    //Initialize last_time too...
+    extern Timer t;
+    last_time = std::chrono::duration_cast<chrono::microseconds>(t.elapsed_time()).count();
 }
 /*
 double StepListener::currentSpeedStepsPerSeconds(){
@@ -73,8 +77,8 @@ double StepListener::currentSpeedStepsPerSeconds(){
 
 void StepListener::calculateSpeed(){
     extern Timer t;
-    last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
-    duration = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time;
+    
+    duration = std::chrono::duration_cast<chrono::microseconds>(t.elapsed_time()).count() - last_time;
 
     last_time = duration + last_time;
     speed =  (double)1 / duration * 1000000;//update speed when pulse rises
@@ -82,10 +86,13 @@ void StepListener::calculateSpeed(){
 
 double StepListener::getCurrentSpeed(){
     extern Timer t;
-    unsigned long time_passed = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time;
+    unsigned long time_passed = std::chrono::duration_cast<chrono::microseconds>(t.elapsed_time()).count() - last_time;
 
-    if(time_passed > 1000) //if speed didn't update for 1 seconds, it's speed =0;
+    if(time_passed > 1000000) //if speed didn't update for 1 seconds, it's speed =0;
         return 0;
     else
         return speed;
+}
+double StepListener::returnSpeed(){
+    return speed;
 }
