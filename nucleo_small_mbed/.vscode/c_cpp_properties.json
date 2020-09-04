@@ -8,6 +8,8 @@
             "includePath": [
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/include",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/src",
+                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
+                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector/src",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
@@ -281,6 +283,10 @@
                 "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
+<<<<<<< HEAD
+=======
+                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/def_pins/src",
+>>>>>>> test_branch
                 "/home/leetaeyun/.platformio/packages/tool-unity",
                 ""
             ],
@@ -289,6 +295,8 @@
                 "path": [
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/include",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/src",
+                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
+                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector/src",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
@@ -562,6 +570,10 @@
                     "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
+<<<<<<< HEAD
+=======
+                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/def_pins/src",
+>>>>>>> test_branch
                     "/home/leetaeyun/.platformio/packages/tool-unity",
                     ""
                 ]
