@@ -6,6 +6,8 @@ StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper){
 }
 
 void StallLoadDetector::measureMotorCharacteristics(){
+    double* currentValues = new double[NUM_OF_CURRENT_SAMPLE];
+
     extern Timer t;
     unsigned int speed = 0;
     unsigned int idx = 0;
@@ -14,7 +16,7 @@ void StallLoadDetector::measureMotorCharacteristics(){
     while(speed < MAX_STEP_SPEED){
         this->stepper->runSpeed();
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME){
-            this->currentValues[idx] = ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
+            currentValues[idx] = ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
             idx++;
             speed = speed + skip_step;
             this->stepper->setSpeed(speed);
@@ -22,14 +24,16 @@ void StallLoadDetector::measureMotorCharacteristics(){
         }
     }
 
-    #ifdef DEBUG
-    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
-        printf("%d\n",(int)(this->currentValues[i]));
-    }
-    #endif
+    this->lineContainer = getTrendLine(currentValues, NUM_OF_CURRENT_SAMPLE , MAX_DEPTH_FOR_RECURSION);
+    this->containerLen = sizeofLineContainer(this->lineContainer, 1<<MAX_DEPTH_FOR_RECURSION);
+    delete[] currentValues;
 }
 
+
+
 void StallLoadDetector::measureMotorMeanCharacteristics(){
+    double* currentValues = new double[NUM_OF_CURRENT_SAMPLE];
+
     extern Timer t;
     unsigned int speed = 0;
     unsigned int idx = 0;
@@ -42,7 +46,7 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
         sampleMean += ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
         samplingCount++; // to divide sampleMean
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME ){
-            this->currentValues[idx] = sampleMean/samplingCount;
+            currentValues[idx] = sampleMean/samplingCount;
             //start to sampleMean again 
             sampleMean = 0;
             samplingCount = 0;
@@ -54,20 +58,16 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
         }
     }
 
-    #ifdef DEBUG
-    for(int i = 0; i < NUM_OF_CURRENT_SAMPLE; i++){
-        printf("%d\n",(int)(this->currentValues[i]));
-    }
-    #endif
+    this->lineContainer = getTrendLine(currentValues, NUM_OF_CURRENT_SAMPLE , MAX_DEPTH_FOR_RECURSION);
+    this->containerLen = sizeofLineContainer(this->lineContainer, 1<<MAX_DEPTH_FOR_RECURSION);
+    delete[] currentValues;
 }
 
-double StallLoadDetector::calculateCurrentFromSpeed(int speed){
+double StallLoadDetector::calculateCurrentFromSpeed(double speed){
     //Get current using array
-    int quotient = speed/skip_step;
-    int remainder = speed%skip_step;
-    if(remainder){
-        return (this->currentValues[quotient]+this->currentValues[quotient])/2;
-    }else{
-        return this->currentValues[quotient];
-    }
+    return getCurrentValue(speed, MAX_STEP_SPEED, NUM_OF_CURRENT_SAMPLE, this->lineContainer, this->containerLen);
+}
+
+StallLoadDetector::~StallLoadDetector(){
+    free(this->lineContainer);    
 }
