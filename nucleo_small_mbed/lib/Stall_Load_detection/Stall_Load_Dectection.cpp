@@ -49,6 +49,7 @@ int section_sum()
 
 double get_speed()
 {
+  extern Timer t;
   static unsigned long last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   unsigned long temp = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time;
 

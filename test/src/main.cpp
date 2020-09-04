@@ -21,7 +21,7 @@ int main() {
     printf("sector_size = 0x%.8x\r\n", sector_size);
     printf("addr = 0x%.8x\r\n", addr);
     printf("----------------------\r\n");
-
+    printf("sizeof double=0x%.8x\r\n",sizeof(double));
     // Create an array in SRAM (later on to be stored in the first page of last sector in FLASH)
     uint32_t        data_len = 15;      // calculate available space
     uint32_t*       data = new uint32_t[15] {1, 2, 3};    // create an array in SRAM and initialize the first three elements
