@@ -8,8 +8,6 @@
             "includePath": [
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/include",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/src",
-                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
-                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector/src",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
@@ -283,7 +281,7 @@
                 "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
-                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/def_pins/src",
+                "/home/leetaeyun/.platformio/packages/tool-unity",
                 ""
             ],
             "browse": {
@@ -291,8 +289,6 @@
                 "path": [
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/include",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/src",
-                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
-                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector/src",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/stall_load_detector",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/step_listener/src",
@@ -566,7 +562,7 @@
                     "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
-                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/def_pins/src",
+                    "/home/leetaeyun/.platformio/packages/tool-unity",
                     ""
                 ]
             },
@@ -631,10 +627,10 @@
             "cStandard": "c11",
             "cppStandard": "c++14",
             "forcedInclude": [
-                "/home/jaeyeon/works/urp/URP2020_NUCLEO/nucleo_small_mbed/.pio/build/nucleo_f446re/mbed_config.h",
+                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/.pio/build/nucleo_f446re/mbed_config.h",
                 ""
             ],
-            "compilerPath": "/home/jaeyeon/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc",
+            "compilerPath": "/home/leetaeyun/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc",
             "compilerArgs": [
                 "-mcpu=cortex-m4",
                 "-mfloat-abi=softfp",

@@ -25,12 +25,15 @@ DigitalOut ms1In(internal_ms1);
 DigitalOut ms2In(internal_ms2);
 DigitalOut ms3In(internal_ms1);
 
+DigitalOut stall_(stall);
+DigitalOut force_dir_(force_dir);
+PwmOut force_mag_(force_mag);
+
 
 int main() {
 
   StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In); 
   
-  driver.readyToListen();
   t.start();// must start timer in main
   pc.set_baud(9600);
   pc.set_format(
@@ -46,11 +49,9 @@ int main() {
   stepper1.setMaxSpeed(2000);
   stepper1.setSpeed(400);
 
-  
   Flash_handler Flash_handler;//Flash_memory handler
   Ammeter ammeter(&currentPin);
   StallLoadDetector detector(&ammeter, &stepper1);
-  
   
   if(ms3 ==1){
     detector.measureMotorMeanCharacteristics();
@@ -58,14 +59,16 @@ int main() {
     Flash_handler.Flash_write(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
   }
   Flash_handler.Flash_read(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
-  
+  driver.readyToListen();
+
   //Get_Linear_Regression2(stepper1);
   // put your setup code here, to run once:
   //double speed=200;
   stepper1.setSpeed(400);
 
   while(1){
-  printf("%ld\n",(long)(detector.getLPFLoadCurrent(&driver)));
+  detector.AnalogOutForce(&driver,&force_mag_, &force_dir_);
+  //printf("%ld\n",(long)(detector.getLoadCurrent(&driver)));
   //printf("%d\n",(int)(detector.calculateCurrentFromSpeed(&driver))); 
   //printf("%d\n",(int)(detector.gettotalCurrent(&driver)));
   //printf("%d\n",(int)(driver.getCurrentSpeed()));  

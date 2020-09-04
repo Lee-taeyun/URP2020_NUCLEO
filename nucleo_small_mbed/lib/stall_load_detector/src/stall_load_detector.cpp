@@ -1,12 +1,14 @@
 #include "stall_load_detector.h"
 
-StallLoadDetector::StallLoadDetector(Ammeter* amm, AccelStepper* stepper1){
+StallLoadDetector::StallLoadDetector(Ammeter *amm, AccelStepper *stepper1)
+{
     this->stepper = stepper1;
     this->ammeter = amm;
     this->currentValues = new double[NUM_OF_CURRENT_SAMPLE];
 }
-StallLoadDetector::~StallLoadDetector(){
-    delete[] this->currentValues;    
+StallLoadDetector::~StallLoadDetector()
+{
+    delete[] this->currentValues;
 }
 /*
 void StallLoadDetector::startToRun(){
@@ -17,22 +19,25 @@ void StallLoadDetector::startToRun(){
 }
 */
 
-void StallLoadDetector::measureMotorCharacteristics(){
+void StallLoadDetector::measureMotorCharacteristics()
+{
     extern Timer t;
     unsigned int speed = 0;
     unsigned int idx = 0;
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
     //this->startToRun();
-    while(speed < MAX_STEP_SPEED){
+    while (speed < MAX_STEP_SPEED)
+    {
         this->stepper->runSpeed();
-        ammeter->readCurrentLPF();//we should readCurrentLPF() ALWAYS, NOT only just write down
-        if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME){
+        ammeter->readCurrentLPF(); //we should readCurrentLPF() ALWAYS, NOT only just write down
+        if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME)
+        {
             this->stepper->runSpeed();
-            this->currentValues[idx] = (ammeter->readCurrentLPF())*SAMPLE_VALUE_MULTIPLIER;
+            this->currentValues[idx] = (ammeter->readCurrentLPF()) * SAMPLE_VALUE_MULTIPLIER;
             idx++;
             speed = speed + skip_step;
-            
+
             this->stepper->setSpeed(speed);
             this->stepper->runSpeed();
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
@@ -49,7 +54,8 @@ void StallLoadDetector::measureMotorCharacteristics(){
     //#endif
 }
 
-void StallLoadDetector::measureMotorMeanCharacteristics(){
+void StallLoadDetector::measureMotorMeanCharacteristics()
+{
     extern Timer t;
     unsigned int speed = 0;
     unsigned int idx = 0;
@@ -58,18 +64,20 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
     //this->startToRun();
-    while(speed < MAX_STEP_SPEED){
-       this->stepper->runSpeed();
-        sampleMean += ammeter->readCurrentLPF()*SAMPLE_VALUE_MULTIPLIER;
+    while (speed < MAX_STEP_SPEED)
+    {
+        this->stepper->runSpeed();
+        sampleMean += ammeter->readCurrentLPF() * SAMPLE_VALUE_MULTIPLIER;
         samplingCount++; // to divide sampleMean
-        if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME ){
-            this->currentValues[idx] = (sampleMean)/samplingCount;
+        if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME)
+        {
+            this->currentValues[idx] = (sampleMean) / samplingCount;
             this->stepper->runSpeed();
-            //start to sampleMean again 
+            //start to sampleMean again
             sampleMean = 0;
             samplingCount = 0;
             idx++;
-            
+
             speed = speed + skip_step;
             this->stepper->setSpeed(speed);
             this->stepper->runSpeed();
@@ -85,28 +93,57 @@ void StallLoadDetector::measureMotorMeanCharacteristics(){
     //#endif
 }
 
-double StallLoadDetector::calculateCurrentFromSpeed(StepListener* steplistener){
+double StallLoadDetector::calculateCurrentFromSpeed(StepListener *steplistener)
+{
     //Get current using array
     int speed = (int)(steplistener->getCurrentSpeed());
-    if( speed >1000 || speed<0) speed = speed %1000;
-    int quotient = ((int)speed)/skip_step;
-    int remainder = ((int)speed)%skip_step;
-    if(remainder){
-        return (this->currentValues[quotient]+this->currentValues[quotient+remainder])/2;
-    }else{
+    if (speed > 1000 || speed < 0)
+        speed = speed % 1000;
+    int quotient = ((int)speed) / skip_step;
+    int remainder = ((int)speed) % skip_step;
+    if (remainder)
+    {
+        return (this->currentValues[quotient] + this->currentValues[quotient + 1]) / 2;
+    }
+    else
+    {
         return this->currentValues[quotient];
     }
 }
 
-double StallLoadDetector::gettotalCurrent(StepListener* steplistener){
-    return SAMPLE_VALUE_MULTIPLIER*(ammeter->readCurrentLPF());
+double StallLoadDetector::gettotalCurrent(StepListener *steplistener)
+{
+    return SAMPLE_VALUE_MULTIPLIER * (ammeter->readCurrentLPF());
 }
-double StallLoadDetector::getLoadCurrent(StepListener* steplistener){
-    return SAMPLE_VALUE_MULTIPLIER*(ammeter->readCurrentLPF()) - calculateCurrentFromSpeed(steplistener);
+double StallLoadDetector::getLoadCurrent(StepListener *steplistener)
+{
+    return SAMPLE_VALUE_MULTIPLIER * (ammeter->readCurrentLPF()) / calculateCurrentFromSpeed(steplistener)-1;
 }
 
-double StallLoadDetector::getLPFLoadCurrent(StepListener* steplistener){
+double StallLoadDetector::getLPFLoadCurrent(StepListener *steplistener)
+{
     double LoadCurrent = getLoadCurrent(steplistener);
     
-    return LoadCurrent - LPF_filter.LPF(LoadCurrent,LPF_alpha);
+    return LoadCurrent - LPF_filter.LPF(LoadCurrent, LPF_alpha);
+}
+void StallLoadDetector::AnalogOutForce(StepListener *steplistener,PwmOut *force_mag, DigitalOut *force_dir)
+{
+    double LoadCurrent = getLoadCurrent(steplistener);
+    printf("%ld\n",(int)(LoadCurrent*10000));
+
+    if(LoadCurrent < 1 && LoadCurrent>-1){//
+        *force_dir = 1;
+        *force_mag = 0;
+    }
+    else if (LoadCurrent < 0)
+    {   
+
+        *force_dir = 0;
+        *force_mag = -((float)LoadCurrent)*LOAD_CURRENT_SCALER;
+    }
+    else if (LoadCurrent > 0)
+    {
+        *force_dir = 1;
+        *force_mag = ((float)LoadCurrent)*LOAD_CURRENT_SCALER;
+    }
 }

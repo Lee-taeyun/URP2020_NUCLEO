@@ -8,12 +8,14 @@
 #include "AccelStepper.h"
 #include "step_listener.h"
 
+
 // NUM_OF_CURRENT_SAMPLE must be a divisor of MAX_STEP_SPEED
 // MAX_STEP_SPEED = NUM_OF_CURRENT_SAMPLE * SKIP_STEP
 #define NUM_OF_CURRENT_SAMPLE   500
 #define MAX_STEP_SPEED          1000 //steps per second
-#define SPEED_HOLDING_TIME          50   //ms
+#define SPEED_HOLDING_TIME          100   //ms
 #define SAMPLE_VALUE_MULTIPLIER 100000
+#define LOAD_CURRENT_SCALER     100    
 
 class StallLoadDetector{
     private:
@@ -37,5 +39,7 @@ class StallLoadDetector{
         
         double getLPFLoadCurrent(StepListener* steplistener);
         ~StallLoadDetector();
+
+        void AnalogOutForce(StepListener *steplistener,PwmOut *force_mag, DigitalOut *force_dir);
 };
 #endif
