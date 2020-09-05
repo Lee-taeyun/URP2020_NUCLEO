@@ -15,7 +15,7 @@
 #define MAX_STEP_SPEED          1000 //steps per second
 #define SPEED_HOLDING_TIME          100   //ms
 #define SAMPLE_VALUE_MULTIPLIER 100000
-#define LOAD_CURRENT_SCALER     100    
+#define LOAD_CURRENT_SCALER     10    
 
 class StallLoadDetector{
     private:

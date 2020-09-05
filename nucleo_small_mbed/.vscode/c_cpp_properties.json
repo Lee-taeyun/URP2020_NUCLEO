@@ -279,7 +279,6 @@
                 "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/STM32Cube_FW/STM32F4xx_HAL_Driver/Legacy",
                 "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE",
                 "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
-                "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                 "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
                 "/home/leetaeyun/.platformio/packages/tool-unity",
                 ""
@@ -560,7 +559,6 @@
                     "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/STM32Cube_FW/STM32F4xx_HAL_Driver/Legacy",
                     "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE",
                     "/home/leetaeyun/.platformio/packages/framework-mbed/targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446RE",
-                    "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Speed_Calculus",
                     "/home/leetaeyun/Documents/PlatformIO/Projects/URP2020/nucleo_small_mbed/lib/Stall_Load_detection",
                     "/home/leetaeyun/.platformio/packages/tool-unity",
                     ""

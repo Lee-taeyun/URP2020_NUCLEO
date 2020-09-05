@@ -131,7 +131,7 @@ void StallLoadDetector::AnalogOutForce(StepListener *steplistener,PwmOut *force_
     double LoadCurrent = getLoadCurrent(steplistener);
     printf("%ld\n",(int)(LoadCurrent*10000));
 
-    if(LoadCurrent < 1 && LoadCurrent>-1){//
+    if(LoadCurrent < 0.004 && LoadCurrent>-0.004){//
         *force_dir = 1;
         *force_mag = 0;
     }
