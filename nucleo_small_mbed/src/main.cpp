@@ -27,7 +27,7 @@ DigitalOut ms3In(internal_ms1);
 
 DigitalOut stall_(stall);
 DigitalOut force_dir_(force_dir);
-PwmOut force_mag_(force_mag);
+AnalogOut force_mag_(force_mag);
 
 
 int main() {
@@ -42,32 +42,47 @@ int main() {
       /* stop bit */ 1
   );
   
-  int goal = 1200;
+  int goal = 2400;
   stepper1.moveTo(goal);
-  stepper1.setAcceleration(1000);
+  stepper1.setAcceleration(2000);
   stepper1.setMinPulseWidth(20);
-  stepper1.setMaxSpeed(2000);
+  stepper1.setMaxSpeed(800);
   stepper1.setSpeed(400);
 
   Flash_handler Flash_handler;//Flash_memory handler
   Ammeter ammeter(&currentPin);
   StallLoadDetector detector(&ammeter, &stepper1);
   
-  if(ms3 ==1){
+  /*
+  //if(ms3 ==1){
     detector.measureMotorMeanCharacteristics();
     Flash_handler.Flash_erase();
     Flash_handler.Flash_write(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
-  }
+  //}
+  */
+  
   Flash_handler.Flash_read(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
-  driver.readyToListen();
+  //driver.readyToListen();
 
   //Get_Linear_Regression2(stepper1);
   // put your setup code here, to run once:
   //double speed=200;
-  stepper1.setSpeed(400);
-
+  int speed;
+  unsigned int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   while(1){
-  detector.AnalogOutForce(&driver,&force_mag_, &force_dir_);
+
+  if(stepper1.speed()<0) speed =-stepper1.speed();
+  else speed= stepper1.speed();
+
+  double mag = detector.AnalogOutForce(speed, &force_mag_, &force_dir_);
+  //printf("%d",(int)(mag*1000));
+  if(mag > 0 && std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count()- last_time >30){
+    //printf("yes");
+    goal = -goal;
+    stepper1.moveTo(goal);
+    last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
+  }
+  stepper1.run();
   //printf("%ld\n",(long)(detector.getLoadCurrent(&driver)));
   //printf("%d\n",(int)(detector.calculateCurrentFromSpeed(&driver))); 
   //printf("%d\n",(int)(detector.gettotalCurrent(&driver)));

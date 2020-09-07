@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "filter.h"
 
-#define LPF_alpha 0.995
+#define LPF_alpha 0.99
 
 
 class Ammeter{

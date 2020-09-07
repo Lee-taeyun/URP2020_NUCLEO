@@ -32,15 +32,15 @@ class StallLoadDetector{
         StallLoadDetector(Ammeter* amm,AccelStepper* stepper1 );
         void measureMotorCharacteristics();
         void measureMotorMeanCharacteristics();
-        double calculateCurrentFromSpeed(StepListener* steplistener);
-        double getLoadCurrent(StepListener* steplistener);
-        double gettotalCurrent(StepListener* steplistener);
-        double calculateCurrentVarition(StepListener *steplistener)
+        double calculateCurrentFromSpeed(double speed);
+        double getLoadCurrent(double speed);
+        double gettotalCurrent();
+        //double calculateCurrentVarition(double speed);
 
         
-        double getLPFLoadCurrent(StepListener* steplistener);
+        double getLPFLoadCurrent(double speed_);
         ~StallLoadDetector();
 
-        void AnalogOutForce(StepListener *steplistener,PwmOut *force_mag, DigitalOut *force_dir);
+        double AnalogOutForce(double speed,AnalogOut *force_mag, DigitalOut *force_dir);
 };
 #endif
