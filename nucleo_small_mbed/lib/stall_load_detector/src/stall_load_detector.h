@@ -35,6 +35,7 @@ class StallLoadDetector{
         double calculateCurrentFromSpeed(StepListener* steplistener);
         double getLoadCurrent(StepListener* steplistener);
         double gettotalCurrent(StepListener* steplistener);
+        double calculateCurrentVarition(StepListener *steplistener)
 
         
         double getLPFLoadCurrent(StepListener* steplistener);

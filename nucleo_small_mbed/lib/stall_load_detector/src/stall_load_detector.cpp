@@ -4,7 +4,7 @@ StallLoadDetector::StallLoadDetector(Ammeter *amm, AccelStepper *stepper1)
 {
     this->stepper = stepper1;
     this->ammeter = amm;
-    this->currentValues = new double[NUM_OF_CURRENT_SAMPLE];
+    this->currentValues = new double[2*NUM_OF_CURRENT_SAMPLE];
 }
 StallLoadDetector::~StallLoadDetector()
 {
@@ -34,7 +34,7 @@ void StallLoadDetector::measureMotorCharacteristics()
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME)
         {
             this->stepper->runSpeed();
-            this->currentValues[idx] = (ammeter->readCurrentLPF()) * SAMPLE_VALUE_MULTIPLIER;
+            this->currentValues[idx] = (ammeter->readCurrentLPF());
             idx++;
             speed = speed + skip_step;
 
@@ -60,6 +60,7 @@ void StallLoadDetector::measureMotorMeanCharacteristics()
     unsigned int speed = 0;
     unsigned int idx = 0;
     long double sampleMean = 0;
+    long double sampleSquareMean=0;
     unsigned int samplingCount = 0;
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
@@ -67,14 +68,19 @@ void StallLoadDetector::measureMotorMeanCharacteristics()
     while (speed < MAX_STEP_SPEED)
     {
         this->stepper->runSpeed();
-        sampleMean += ammeter->readCurrentLPF() * SAMPLE_VALUE_MULTIPLIER;
+        double temp = ammeter->readCurrentLPF();
+        sampleMean += temp;
+        sampleSquareMean += temp*temp;
         samplingCount++; // to divide sampleMean
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME)
         {
             this->currentValues[idx] = (sampleMean) / samplingCount;
+            this->currentValues[idx+NUM_OF_CURRENT_SAMPLE] = sampleSquareMean / samplingCount-(this->currentValues[idx]*this->currentValues[idx]);
+            //variation
             this->stepper->runSpeed();
             //start to sampleMean again
             sampleMean = 0;
+            sampleSquareMean =0;
             samplingCount = 0;
             idx++;
 
@@ -110,14 +116,31 @@ double StallLoadDetector::calculateCurrentFromSpeed(StepListener *steplistener)
         return this->currentValues[quotient];
     }
 }
+double StallLoadDetector::calculateCurrentVarition(StepListener *steplistener)
+{
+    //Get current using array
+    int speed = (int)(steplistener->getCurrentSpeed());
+    if (speed > 1000 || speed < 0)
+        speed = speed % (1000);
+    int quotient = ((int)speed) / skip_step;
+    int remainder = ((int)speed) % skip_step;
+    if (remainder)
+    {
+        return (this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient] + this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient + 1]) / 2;
+    }
+    else
+    {
+        return this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient];
+    }
+}
 
 double StallLoadDetector::gettotalCurrent(StepListener *steplistener)
 {
-    return SAMPLE_VALUE_MULTIPLIER * (ammeter->readCurrentLPF());
+    return (ammeter->readCurrentLPF());
 }
 double StallLoadDetector::getLoadCurrent(StepListener *steplistener)
 {
-    return SAMPLE_VALUE_MULTIPLIER * (ammeter->readCurrentLPF()) / calculateCurrentFromSpeed(steplistener)-1;
+    return (ammeter->readCurrentLPF()) / calculateCurrentFromSpeed(steplistener)-1;
 }
 
 double StallLoadDetector::getLPFLoadCurrent(StepListener *steplistener)
@@ -129,11 +152,12 @@ double StallLoadDetector::getLPFLoadCurrent(StepListener *steplistener)
 void StallLoadDetector::AnalogOutForce(StepListener *steplistener,PwmOut *force_mag, DigitalOut *force_dir)
 {
     double LoadCurrent = getLoadCurrent(steplistener);
+    double LoadCurrent_Variation = calculateCurrentVarition(steplistener);
     printf("%ld\n",(int)(LoadCurrent*10000));
 
-    if(LoadCurrent < 0.004 && LoadCurrent>-0.004){//
+    if(LoadCurrent < 0.001 && LoadCurrent>-0.001){//
         *force_dir = 1;
-        *force_mag = 0;
+        *force_mag = 0;//
     }
     else if (LoadCurrent < 0)
     {   
