@@ -43,7 +43,7 @@ void StepListener::readyToListen(){
 
     this->step->mode(PullDown);
     this->step->rise( [this](void)->void{
-        //calculateSpeed();
+        calculateSpeed();
         this->stepIn->write(1);
         //added by taeyun
     } );

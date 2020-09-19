@@ -19,6 +19,6 @@
 #define external_step PB_8
 #define external_dir PB_5
 
-#define currnet_sense PC_0
+#define current_sense PC_0
 
 #endif

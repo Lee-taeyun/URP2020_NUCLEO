@@ -2,6 +2,7 @@
 #define STEP_LISTENER
 
 #include "mbed.h"
+#include "def_pins.h"
 
 #define DEFAULT_TICK_DURATION 1 // 1 second
 
