@@ -32,7 +32,7 @@ AnalogOut force_mag_(force_mag);
 
 int main() {
 
-  StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In); 
+  //StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In); 
   
   t.start();// must start timer in main
   pc.set_baud(9600);
@@ -42,24 +42,22 @@ int main() {
       /* stop bit */ 1
   );
   
-  int goal = 2400;
-  stepper1.moveTo(goal);
   stepper1.setAcceleration(2000);
   stepper1.setMinPulseWidth(20);
   stepper1.setMaxSpeed(800);
-  stepper1.setSpeed(400);
-
+  stepper1.setSpeed(500);
+  stepper1.moveTo(2400);
   Flash_handler Flash_handler;//Flash_memory handler
   Ammeter ammeter(&currentPin);
   StallLoadDetector detector(&ammeter, &stepper1);
   
-  /*
-  //if(ms3 ==1){
+  
+  if(ms3 ==1){
     detector.measureMotorMeanCharacteristics();
     Flash_handler.Flash_erase();
     Flash_handler.Flash_write(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
-  //}
-  */
+  }
+  
   
   Flash_handler.Flash_read(detector.currentValues,NUM_OF_CURRENT_SAMPLE *sizeof(double));
   //driver.readyToListen();
@@ -67,22 +65,26 @@ int main() {
   //Get_Linear_Regression2(stepper1);
   // put your setup code here, to run once:
   //double speed=200;
-  int speed;
+  int speed=400;
+  stepper1.setSpeed(speed);
   unsigned int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   while(1){
 
-  if(stepper1.speed()<0) speed =-stepper1.speed();
-  else speed= stepper1.speed();
-
-  double mag = detector.AnalogOutForce(speed, &force_mag_, &force_dir_);
+  double mag = detector.AnalogOutForce(abs(speed), &force_mag_, &force_dir_);
   //printf("%d",(int)(mag*1000));
-  if(mag > 0 && std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count()- last_time >30){
+  if(mag > 0 && force_dir_ ==0 && std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count()- last_time >500){
     //printf("yes");
-    goal = -goal;
-    stepper1.moveTo(goal);
+    stepper1.setSpeed(-speed);
+    speed = -speed;
     last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   }
-  stepper1.run();
+  else if(mag > 0 && force_dir_ ==1 && std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count()- last_time >500){
+    //printf("yes");
+    stepper1.setSpeed(speed+100);
+    speed = speed+100;
+    last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
+  }
+  stepper1.runSpeed();
   //printf("%ld\n",(long)(detector.getLoadCurrent(&driver)));
   //printf("%d\n",(int)(detector.calculateCurrentFromSpeed(&driver))); 
   //printf("%d\n",(int)(detector.gettotalCurrent(&driver)));
