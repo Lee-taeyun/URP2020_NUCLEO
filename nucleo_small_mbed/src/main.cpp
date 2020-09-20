@@ -4,6 +4,7 @@
 #include "stall_load_detector.h"
 #include "Flash_handler.h"
 
+
 static BufferedSerial pc(USBTX, USBRX);
 
 //Timer t should be defined in main.cpp
@@ -29,11 +30,12 @@ DigitalOut stall_(stall);
 DigitalOut force_dir_(force_dir);
 AnalogOut force_mag_(force_mag);
 
+//enum EVENTS{SAME_DIR, OP_DIR, SHORT_STROKE};
+//enum MODES{DEFAULT,ALARM,STEP_LISTENER };
 
 int main() {
 
-  //StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In); 
-  
+  //StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In);   
   t.start();// must start timer in main
   pc.set_baud(9600);
   pc.set_format(
@@ -69,6 +71,7 @@ int main() {
   stepper1.setSpeed(speed);
   unsigned int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   while(1){
+
 
   double mag = detector.AnalogOutForce(abs(speed), &force_mag_, &force_dir_);
   //printf("%d",(int)(mag*1000));
