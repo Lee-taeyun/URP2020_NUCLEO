@@ -1,14 +1,42 @@
 #include "mode_events.h"
+MODES determine_mode(InterruptIn* pin1, InterruptIn *pin2){
+    int p1 = *pin1;
+    int p2 = *pin2;
+    if(p1 == 0 && p2 == 0){
+        return DEFAULT;
+    }else if(p1 == 0 && p2 == 1){
+        return STEP_LISTENER;
+    }else if(p1 == 1 && p2 == 0){
+        return MOTION_1;
+    }else if(p1 == 1 && p2 == 0){
+        return MOTION_2;
+    }else{
+        return DEFAULT;
+    }
+}
+EVENTS determine_event(StallLoadDetector* detector, double speed){
+    double loadCurrent = detector->getLoadCurrent(speed);
+    if(loadCurrent < 0.01 && loadCurrent > -0.01){
+        return NOTHING;
+    }else if( loadCurrent*100 < 0){
+        return SAME_DIR;
+    }else if( loadCurrent*100 > 0){
+        return OP_DIR;
+    }
+    return NOTHING;
+}
 
 MODES Determine_MODE(){
     if(ms1==0 && ms2 ==0)
         return DEFAULT;
     else if(ms1==0 && ms2 ==1)
-        return ALARM;
-    else if(ms1==1 && ms2 ==0)
         return STEP_LISTENER;
-    else
+    else if(ms1==1 && ms2 ==0)
+        return MOTION_1;
+    else if(ms1==1 && ms2 == 1)
     {
+        return MOTION_2;
+    }else{
         return DEFAULT;
     }
     

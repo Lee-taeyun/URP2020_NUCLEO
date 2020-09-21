@@ -18,7 +18,27 @@ StepListener::StepListener(InterruptIn* step, InterruptIn* dir,
     this->ms2In = ms2In;
     this->ms3In = ms3In;
 
+    this->isstop = true;
+
 }
+bool StepListener::isStop(){
+    return this->isstop;
+}
+
+void StepListener::stopToListen(){
+    this->isstop = true;
+    this->step->rise(NULL);
+    this->step->fall(NULL);
+    this->dir->rise(NULL);
+    this->dir->fall(NULL);
+    this->ms1->rise(NULL);
+    this->ms1->fall(NULL);
+    this->ms2->rise(NULL);
+    this->ms2->fall(NULL);
+    this->ms3->rise(NULL);
+    this->ms3->fall(NULL);
+}
+
 void StepListener::readyToListen(){
     //Please Call once in setup routines
 
@@ -35,6 +55,7 @@ void StepListener::readyToListen(){
 
     
     */
+    this->isstop = false;
     stepIn->write(0);
     dirIn->write(0);
     ms1In->write(0);

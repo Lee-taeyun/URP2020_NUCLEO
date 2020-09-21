@@ -116,25 +116,7 @@ double StallLoadDetector::calculateCurrentFromSpeed(double speed_)
         return this->currentValues[quotient];
     }
 }
-/*
-double StallLoadDetector::calculateCurrentVarition(double speed_)
-{
-    //Get current using array
-    int speed = (int)(speed_);
-    if (speed > 1000 || speed < 0)
-        speed = speed % (1000);
-    int quotient = ((int)speed) / skip_step;
-    int remainder = ((int)speed) % skip_step;
-    if (remainder)
-    {
-        return (this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient] + this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient + 1]) / 2;
-    }
-    else
-    {
-        return this->currentValues[NUM_OF_CURRENT_SAMPLE+quotient];
-    }
-}
-*/
+
 
 double StallLoadDetector::gettotalCurrent()
 {
@@ -142,7 +124,7 @@ double StallLoadDetector::gettotalCurrent()
 }
 double StallLoadDetector::getLoadCurrent(double speed_)
 {
-    return (ammeter->readCurrentLPF()) / calculateCurrentFromSpeed(speed_)-1;
+    return ammeter->readCurrentLPF() / calculateCurrentFromSpeed(speed_)-1;
 }
 
 double StallLoadDetector::getLPFLoadCurrent(double speed_)
@@ -154,9 +136,7 @@ double StallLoadDetector::getLPFLoadCurrent(double speed_)
 double StallLoadDetector::AnalogOutForce(double speed_,AnalogOut *force_mag, DigitalOut *force_dir)
 {
     double LoadCurrent = getLoadCurrent(speed_);
-    //double LoadCurrent_Variation = calculateCurrentVarition(speed_);
-    //printf("%ld\n",(int)(LoadCurrent*10000));
-
+    
     if(LoadCurrent < 0.01 && LoadCurrent>-0.01){//
         *force_dir = 0;
         *force_mag = 0;//

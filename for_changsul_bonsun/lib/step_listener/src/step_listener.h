@@ -1,5 +1,5 @@
-#ifndef STEP_LISTENER
-#define STEP_LISTENER
+#ifndef STEP_LISTENER_H
+#define STEP_LISTENER_H
 
 #include "mbed.h"
 #include "def_pins.h"
@@ -27,7 +27,7 @@ class StepListener{
         Ticker speedometer;
         
         */
-
+        bool isstop;
         //below is taeyun's code
         double speed;
         unsigned long last_time;
@@ -42,6 +42,8 @@ class StepListener{
 
         void readyToListen();
         //double currentSpeedStepsPerSeconds();
+        void stopToListen();
+        bool isStop();
 
         void calculateSpeed();
         double getCurrentSpeed();

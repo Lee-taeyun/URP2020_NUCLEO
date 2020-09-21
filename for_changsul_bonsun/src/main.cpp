@@ -5,6 +5,116 @@
 #include "Flash_handler.h"
 #include "mode_events.h"
 
+
+//Timer t should be defined in main.cpp
+//AccelStepper call Timer t as extern variable
+Timer t;
+AnalogIn currentPin(current_sense);
+
+AccelStepper stepper1(AccelStepper::DRIVER, internal_step, internal_dir);
+
+InterruptIn step(external_step);
+InterruptIn dir(external_dir);
+InterruptIn ms1(external_ms1);
+InterruptIn ms2(external_ms2);
+InterruptIn ms3(external_ms3);
+
+DigitalOut stepIn(internal_step);
+DigitalOut dirIn(internal_dir);
+DigitalOut ms1In(internal_ms1);
+DigitalOut ms2In(internal_ms2);
+DigitalOut ms3In(internal_ms1);
+
+DigitalOut stall_(stall);
+DigitalOut force_dir_(force_dir);
+AnalogOut force_mag_(force_mag);
+
+
+int main()
+{
+  const int target = 800;
+  StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In);
+  t.start(); // must start timer in main
+
+  stepper1.setAcceleration(2000);
+  stepper1.setMinPulseWidth(20);
+  stepper1.setMaxSpeed(800);
+  stepper1.setSpeed(500);
+  stepper1.moveTo(target);
+  Flash_handler Flash_handler; //Flash_memory handler
+  Ammeter ammeter(&currentPin);
+  StallLoadDetector detector(&ammeter, &stepper1);
+
+  if (ms3 == 1)
+  {
+    detector.measureMotorMeanCharacteristics();
+    Flash_handler.Flash_erase();
+    Flash_handler.Flash_write(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
+  }
+
+  Flash_handler.Flash_read(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
+
+  int speed = 400;
+  stepper1.setSpeed(speed);
+
+
+  MODES mode = DEFAULT;
+  unsigned int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
+  while (1)
+  { 
+    if(mode == DEFAULT){
+      if(!driver.isStop()){
+        driver.stopToListen();
+      }
+      double mag = detector.AnalogOutForce(abs(speed), &force_mag_, &force_dir_);
+      unsigned int current_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
+      if (mag > 0 && force_dir_ == 0 && current_time - last_time > 250){
+        stepper1.setSpeed(-speed);
+        speed = -speed;
+        last_time = current_time;
+      }else if(mag >0 && force_dir_ == 1 && current_time - last_time > 250){
+        if(speed>0){
+          stepper1.setSpeed(speed+100);
+          speed = speed+100;
+        }else{
+          stepper1.setSpeed(speed-100);
+          speed = speed - 100;
+        }
+        last_time = current_time;
+      }
+      stepper1.runSpeed();
+    }else if(mode == STEP_LISTENER){
+      if(driver.isStop()){
+        driver.readyToListen();
+      }
+    }else if(mode == MOTION_1){
+      if(!driver.isStop()){
+        driver.stopToListen();
+      }
+      stepper1.run();
+      if(stepper1.speed() == 800){
+        stepper1.setAcceleration(-100);
+      }
+      if(stepper1.speed() == 400){
+        stepper1.setAcceleration(100);
+      }
+      if(stepper1.distanceToGo() == 0){
+        stepper1.moveTo(-target);
+      }
+    }
+    
+
+  }
+  return 0;
+}
+
+/*#include <mbed.h>
+#include "def_pins.h"
+#include "step_listener.h"
+#include "stall_load_detector.h"
+#include "Flash_handler.h"
+#include "mode_events.h"
+
 static BufferedSerial pc(USBTX, USBRX);
 
 //Timer t should be defined in main.cpp
@@ -40,10 +150,10 @@ int main()
   t.start(); // must start timer in main
   pc.set_baud(9600);
   pc.set_format(
-      /* bits */ 8,
-      /* parity */ BufferedSerial::None,
-      /* stop bit */ 1);
-
+     //bits  //8,
+     //parity  //BufferedSerial::None,
+     //stop bit  //1);
+/*
   stepper1.setAcceleration(2000);
   stepper1.setMinPulseWidth(20);
   stepper1.setMaxSpeed(800);
@@ -96,4 +206,4 @@ int main()
     stepper1.runSpeed();
   }
   return 0;
-}
+}*/

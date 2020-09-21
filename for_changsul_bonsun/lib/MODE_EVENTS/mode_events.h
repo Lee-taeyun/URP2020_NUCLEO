@@ -1,10 +1,11 @@
 
-#ifndef MODE_EVENTS
-#define MODE_EVENTS
+#ifndef MODE_EVENTS_H
+#define MODE_EVENTS_H
 
 #include <mbed.h>
 #include "def_pins.h"
 #include "AccelStepper.h"
+#include "stall_load_detector.h"
 
 extern InterruptIn ms1;
 extern InterruptIn ms2;
@@ -14,7 +15,10 @@ extern DigitalOut force_dir_;
 extern AnalogOut force_mag_;
 
 enum EVENTS{SAME_DIR, OP_DIR, SHORT_STROKE,NOTHING};
-enum MODES{DEFAULT,ALARM,STEP_LISTENER };
+enum MODES{DEFAULT, STEP_LISTENER, MOTION_1, CALIBRATION };
+MODES determine_mode(InterruptIn* pin1, InterruptIn* pin2);
+EVENTS determine_event(StallLoadDetector* detector, double speed);
+
 MODES Determine_MODE();
 EVENTS Determine_EVENT(MODES MODE);
 
