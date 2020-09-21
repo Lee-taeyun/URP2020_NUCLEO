@@ -55,7 +55,8 @@ void StallLoadDetector::measureMotorCharacteristics()
 }
 
 void StallLoadDetector::measureMotorMeanCharacteristics()
-{
+{   
+    int count=0;
     extern Timer t;
     unsigned int speed = 0;
     unsigned int idx = 0;
@@ -65,6 +66,7 @@ void StallLoadDetector::measureMotorMeanCharacteristics()
     int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
     this->stepper->setSpeed(speed);
     //this->startToRun();
+
     while (speed < MAX_STEP_SPEED)
     {
         this->stepper->runSpeed();
@@ -72,6 +74,8 @@ void StallLoadDetector::measureMotorMeanCharacteristics()
         sampleMean += temp;
         //sampleSquareMean += temp*temp;
         samplingCount++; // to divide sampleMean
+
+
         if (std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count() - last_time > SPEED_HOLDING_TIME)
         {
             this->currentValues[idx] = (sampleMean) / samplingCount;
@@ -83,8 +87,10 @@ void StallLoadDetector::measureMotorMeanCharacteristics()
             //sampleSquareMean =0;
             samplingCount = 0;
             idx++;
-
-            speed = speed + skip_step;
+            if(speed ==0 && count==0)
+                count=1;
+            else
+                speed = speed + skip_step;
             this->stepper->setSpeed(speed);
             this->stepper->runSpeed();
             last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
