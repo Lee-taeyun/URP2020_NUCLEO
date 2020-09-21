@@ -9,7 +9,7 @@ MODES determine_mode(InterruptIn* pin1, InterruptIn *pin2){
     }else if(p1 == 1 && p2 == 0){
         return MOTION_1;
     }else if(p1 == 1 && p2 == 0){
-        return MOTION_2;
+        return CALIBRATION;
     }else{
         return DEFAULT;
     }
@@ -27,15 +27,15 @@ EVENTS determine_event(StallLoadDetector* detector, double speed){
 }
 
 MODES Determine_MODE(){
-    if(ms1==0 && ms2 ==0)
+    if(ms3==0 && ms2 ==0)
         return DEFAULT;
-    else if(ms1==0 && ms2 ==1)
+    else if(ms3==0 && ms2 ==1)
         return STEP_LISTENER;
-    else if(ms1==1 && ms2 ==0)
+    else if(ms3==1 && ms2 ==0)
         return MOTION_1;
-    else if(ms1==1 && ms2 == 1)
+    else if(ms3==1 && ms2 == 1)
     {
-        return MOTION_2;
+        return CALIBRATION;
     }else{
         return DEFAULT;
     }

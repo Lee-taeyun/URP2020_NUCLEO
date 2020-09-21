@@ -569,7 +569,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=40304",
+                "PLATFORMIO=50001",
                 "STM32F446xx",
                 "ARM_MATH_CM4",
                 "DEVICE_ANALOGIN=1",

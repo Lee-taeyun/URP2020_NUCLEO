@@ -14,3 +14,7 @@ double Ammeter::readCurrent(){
 double Ammeter::readCurrentLPF(){
     return this->filter.LPF(this->current->read(),LPF_alpha);
 }
+
+void Ammeter::resetLPF(){
+    this->filter.reset();
+}

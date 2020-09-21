@@ -15,3 +15,8 @@ double Filter::LPF(double newData, double alpha){
         return newData;
     }
 }
+
+void Filter::reset(){
+    this->isPreviousDataStored = false;
+    this->previousData = 0;
+}

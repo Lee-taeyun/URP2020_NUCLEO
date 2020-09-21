@@ -9,6 +9,7 @@
 
 extern InterruptIn ms1;
 extern InterruptIn ms2;
+extern InterruptIn ms3;
 
 extern DigitalOut stall_;
 extern DigitalOut force_dir_;

@@ -7,6 +7,7 @@ class Filter{
     public:
         Filter();
         double LPF(double newData, double alpha);
+        void reset();
 };
 
 #endif

@@ -32,10 +32,10 @@ AnalogOut force_mag_(force_mag);
 
 int main()
 {
-  const int target = 800;
+  int target = 800;
   StepListener driver( &step, &dir, &ms1, &ms2, &ms3, &stepIn, &dirIn, &ms1In, &ms2In, &ms3In);
   t.start(); // must start timer in main
-
+  wait_us(1500000);
   stepper1.setAcceleration(2000);
   stepper1.setMinPulseWidth(20);
   stepper1.setMaxSpeed(800);
@@ -44,17 +44,17 @@ int main()
   Flash_handler Flash_handler; //Flash_memory handler
   Ammeter ammeter(&currentPin);
   StallLoadDetector detector(&ammeter, &stepper1);
-
-  if (ms3 == 1)
+  /*
+  if (ms1 == 1)
   {
     detector.measureMotorMeanCharacteristics();
     Flash_handler.Flash_erase();
     Flash_handler.Flash_write(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
   }
-
+  */
   Flash_handler.Flash_read(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
 
-  int speed = 400;
+  int speed = 500;
   stepper1.setSpeed(speed);
 
 
@@ -62,48 +62,66 @@ int main()
   unsigned int last_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
   while (1)
   { 
+    mode = Determine_MODE();
+    /// DEFAULT!!!
     if(mode == DEFAULT){
       if(!driver.isStop()){
         driver.stopToListen();
       }
       double mag = detector.AnalogOutForce(abs(speed), &force_mag_, &force_dir_);
       unsigned int current_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
-      if (mag > 0 && force_dir_ == 0 && current_time - last_time > 250){
+      if (mag > 0 && force_dir_ == 0 && current_time - last_time > 600){
         stepper1.setSpeed(-speed);
         speed = -speed;
         last_time = current_time;
-      }else if(mag >0 && force_dir_ == 1 && current_time - last_time > 250){
+      }else if(mag >0 && force_dir_ == 1 && current_time - last_time > 300){
         if(speed>0){
           stepper1.setSpeed(speed+100);
           speed = speed+100;
+          if(speed ==1000){
+            speed =500;
+            stepper1.setSpeed(speed);
+          }
+            
         }else{
           stepper1.setSpeed(speed-100);
           speed = speed - 100;
+          if(speed ==-1000)
+            speed =-500;
+            stepper1.setSpeed(speed);
         }
         last_time = current_time;
       }
       stepper1.runSpeed();
+
+    //STEP_LISTENER
     }else if(mode == STEP_LISTENER){
       if(driver.isStop()){
         driver.readyToListen();
       }
+
+    //MOTION_1
     }else if(mode == MOTION_1){
       if(!driver.isStop()){
         driver.stopToListen();
+        stepper1.setCurrentPosition(0);
+        stepper1.setAcceleration(2000);
+      }
+      
+      stepper1.run();
+
+      if(stepper1.distanceToGo() ==0){
+        target = -0.8*target;
+        stepper1.moveTo(target);
       }
       stepper1.run();
-      if(stepper1.speed() == 800){
-        stepper1.setAcceleration(-100);
-      }
-      if(stepper1.speed() == 400){
-        stepper1.setAcceleration(100);
-      }
-      if(stepper1.distanceToGo() == 0){
-        stepper1.moveTo(-target);
-      }
-    }
+    }else if(mode == CALIBRATION){
+    //rearrange the array
+      detector.measureMotorMeanCharacteristics();
+      Flash_handler.Flash_erase();
+      Flash_handler.Flash_write(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
     
-
+    }
   }
   return 0;
 }

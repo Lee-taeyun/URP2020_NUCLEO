@@ -146,11 +146,13 @@ double StallLoadDetector::AnalogOutForce(double speed_,AnalogOut *force_mag, Dig
 
         *force_dir = 1;
         *force_mag = -((float)LoadCurrent)*LOAD_CURRENT_SCALER;
+        this->ammeter->resetLPF();
     }
     else if (LoadCurrent > 0)
     {
         *force_dir = 0;
         *force_mag = ((float)LoadCurrent)*LOAD_CURRENT_SCALER;
+        this->ammeter->resetLPF();
     }
     return *force_mag;
 }

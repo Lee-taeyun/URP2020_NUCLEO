@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "filter.h"
 
-#define LPF_alpha 0.5
+#define LPF_alpha 0.6
 
 
 class Ammeter{
@@ -17,6 +17,7 @@ class Ammeter{
         Ammeter(AnalogIn* currentPin);
         double readCurrent();
         double readCurrentLPF();
+        void resetLPF();
 };
 
 
