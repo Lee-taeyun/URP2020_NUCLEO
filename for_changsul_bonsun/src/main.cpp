@@ -30,6 +30,7 @@ DigitalOut force_dir_(force_dir);
 AnalogOut force_mag_(force_mag);
 
 
+int motion=0;
 int main()
 {
   int target = 800;
@@ -86,9 +87,11 @@ int main()
         }else{
           stepper1.setSpeed(speed-100);
           speed = speed - 100;
-          if(speed ==-1000)
+          if(speed ==-1000){
             speed =-500;
             stepper1.setSpeed(speed);
+          }
+          
         }
         last_time = current_time;
       }
@@ -102,25 +105,52 @@ int main()
 
     //MOTION_1
     }else if(mode == MOTION_1){
+      
       if(!driver.isStop()){
         driver.stopToListen();
-        stepper1.setCurrentPosition(0);
+        stepper1.setSpeed(0);
+        stepper1.runSpeed();
+        speed = 0;
+        target = 800;
         stepper1.setAcceleration(2000);
+        stepper1.setCurrentPosition(0);
+        motion=0;
+      }
+      speed = stepper1.speed();
+      double mag = detector.AnalogOutForce(abs(speed), &force_mag_, &force_dir_);
+      unsigned int current_time = std::chrono::duration_cast<chrono::milliseconds>(t.elapsed_time()).count();
+      if (motion == 1 && mag > 0.12  && current_time - last_time > 500 &&abs(speed) >20){
+        motion=0;
+        speed=0;
+        stepper1.setSpeed(-speed);
+        target = 800;
+        stepper1.setAcceleration(2000);
+        stepper1.setCurrentPosition(0);
+        last_time = current_time;
+      }else if(motion == 0 && mag >0  && current_time - last_time > 500){
+        motion=1;
+        target = 800;
+        stepper1.setAcceleration(2000);
+        stepper1.setCurrentPosition(0);
+        last_time = current_time;
+      }
+
+      if(motion ==1){
+        if(stepper1.distanceToGo() ==0){
+          target = -target;
+          stepper1.moveTo(target);
+        }
+        stepper1.run();
+        speed = stepper1.speed();
+       
       }
       
-      stepper1.run();
-
-      if(stepper1.distanceToGo() ==0){
-        target = -0.8*target;
-        stepper1.moveTo(target);
-      }
-      stepper1.run();
     }else if(mode == CALIBRATION){
     //rearrange the array
       detector.measureMotorMeanCharacteristics();
       Flash_handler.Flash_erase();
       Flash_handler.Flash_write(detector.currentValues, NUM_OF_CURRENT_SAMPLE * sizeof(double));
-    
+      target = 800;
     }
   }
   return 0;
