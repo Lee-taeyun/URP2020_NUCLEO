@@ -569,7 +569,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=50001",
+                "PLATFORMIO=50003",
                 "STM32F446xx",
                 "ARM_MATH_CM4",
                 "DEVICE_ANALOGIN=1",
@@ -625,7 +625,7 @@
                 "__MBED__=1",
                 ""
             ],
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "gcc-x64",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "forcedInclude": [
